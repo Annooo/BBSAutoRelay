@@ -14,5 +14,5 @@ public interface BBSAction {
 
     void posted(WebDriver webDriver);
 
-    void reply(WebDriver webDriver);
+    void reply(WebDriver webDriver) throws Exception;
 }

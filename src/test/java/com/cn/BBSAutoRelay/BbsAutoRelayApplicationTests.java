@@ -14,11 +14,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class BbsAutoRelayApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	public void contextLoads() throws Exception {
 
 		BBSAction action = new ZhihuAction(0 ,null);
 		WebDriver webDriver = new ChromeDriver();
-		action.login(webDriver);
+		action.reply(webDriver);
 
 		webDriver.close();
 		webDriver.quit();
