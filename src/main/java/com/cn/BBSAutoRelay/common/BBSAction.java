@@ -8,11 +8,27 @@ import org.openqa.selenium.WebDriver;
  */
 public interface BBSAction {
 
-    void register(WebDriver webDriver);
+    /**
+     * 注册
+     * @param webDriver
+     */
+    void register(WebDriver webDriver) throws Exception;
 
-    void login(WebDriver webDriver);
+    /*
+    登陆
+     */
+    void login(WebDriver webDriver, String userName, String password) throws Exception;
 
-    void posted(WebDriver webDriver);
+    /**
+     * 发帖
+     * @param webDriver
+     */
+    void posted(WebDriver webDriver) throws Exception;
 
+    /**
+     * 回复
+     * @param webDriver
+     * @throws Exception
+     */
     void reply(WebDriver webDriver) throws Exception;
 }

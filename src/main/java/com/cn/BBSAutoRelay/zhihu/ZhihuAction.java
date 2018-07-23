@@ -2,26 +2,22 @@ package com.cn.BBSAutoRelay.zhihu;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.common.BBSAction;
+import com.cn.BBSAutoRelay.httpClient.IHttpClient;
 import com.cn.BBSAutoRelay.selenium.WebDriverPool;
-import com.cn.BBSAutoRelay.util.HttpClientUtil;
-import okhttp3.Headers;
+import com.google.gson.JsonObject;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class ZhihuAction implements BBSAction{
 
@@ -31,32 +27,36 @@ public class ZhihuAction implements BBSAction{
 
     private int sleepTime = 0;
 
-    /**
-     * 知乎登录类，实例化后，self.session即相当于登录客户端requests.session
+    private static Map<String,String> headers;
 
-    """
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0',
-            'HOST': 'www.zhihu.com', 'Referer': 'https://www.zhihu.com/signin?next=%2F',
-            'Authorization': 'oauth c3cef7c66a1843f8b3a9e6a1e3160e20'}
+    private static JSONObject post_data;
 
-    login_url = 'https://www.zhihu.com/api/v3/oauth/sign_in'
-    captcha_url = 'https://www.zhihu.com/api/v3/oauth/captcha?lang=cn'
-    check_url = 'https://www.zhihu.com/inbox'
-    post_data = {
-        'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
-                'grant_type': 'password',
-                'timestamp': str(int(time.time())),
-        'source': 'com.zhihu.web',
-                'signature': None,
-                'username': None,
-                'password': None,
-                'captcha': None,
-                'lang': 'cn',
-                'ref_source': 'homepage',
-                'utm_source': ''
+    private static final String login_url = "https://www.zhihu.com/api/v3/oauth/sign_in";
+    private static final String captcha_url = "https://www.zhihu.com/api/v3/oauth/captcha?lang=cn";
+    private static final String check_url = "https://www.zhihu.com/inbox";
+
+    static {
+        headers = new HashMap();
+        headers.put("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+        headers.put("Referer","https://www.zhihu.com/signin?next=%2F");
+        headers.put("Authorization","oauth c3cef7c66a1843f8b3a9e6a1e3160e20");
+
+        System.out.println(System.currentTimeMillis());
+        post_data = JSONObject.parseObject("{" +
+                "        \"client_id\": \"c3cef7c66a1843f8b3a9e6a1e3160e20\"," +
+                "        \"grant_type\": \"password\"," +
+                "        \"timestamp\": "+System.currentTimeMillis()+"," +
+                "        \"source\": \"com.zhihu.web\"," +
+                "        \"signature\": \"\"," +
+                "        \"username\": \"\"," +
+                "        \"password\": \"\"," +
+                "        \"captcha\": \"\"," +
+                "        \"lang\": \"cn\"," +
+                "        \"ref_source\": \"homepage\"," +
+                "        \"utm_source\": \"\"" +
+                "    }");
+        System.out.println(post_data);
     }
-     */
-
 
     public ZhihuAction(int sleepTime, WebDriverPool webDriverPool ) {
         if(webDriverPool != null) {
@@ -71,7 +71,15 @@ public class ZhihuAction implements BBSAction{
     }
 
     @Override
-    public void login(WebDriver webDriver) {
+    public void login(WebDriver webDriver, String userName, String password) throws Exception {
+
+        /**
+         * 获取是否需要验证码
+         */
+        IHttpClient request = new IHttpClient();
+
+        post_data.put("captcha",check_captcha(request));
+
 
         //this.logger.info("downloading page " + webDriver.getUrl());
         /*
@@ -159,5 +167,28 @@ public class ZhihuAction implements BBSAction{
 //        postParams.put("password", pwd);
 //        postParams.put("remember_me", "true");
 //        HttpClientUtil.postRequest()
+    }
+
+    /**
+     * 获取验证码
+     * @return
+     */
+    private String check_captcha(IHttpClient request) throws Exception {
+        String result = request.doGet(this.captcha_url,null, headers);
+        System.out.println(result);
+        boolean show_captcha = JSONObject.parseObject(result).getBoolean("show_captcha");
+        //无验证码
+        if(!show_captcha){
+            return null;
+        //有验证码，重新请求获取验证码
+        }else{
+            result = request.doPost(this.captcha_url,null, headers);
+            System.out.println(result);
+        }
+
+        return null;
+    }
+
+    public static void main(String[] args) {
     }
 }
