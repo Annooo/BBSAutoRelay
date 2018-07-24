@@ -31,8 +31,8 @@ public class HttpResult implements Serializable{
     }
 
     /**
-     * 获取状体码
-     * @return 状体码
+     * 获取状态码
+     * @return 状态码
      */
     public Integer getStatusCode() {
         return statusCode;
@@ -40,8 +40,8 @@ public class HttpResult implements Serializable{
 
 
     /**
-     * 设置状体码
-     * @param statusCode 状体码
+     * 设置获取状态码
+     * @param statusCode 获取状态码
      */
     public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
@@ -65,11 +65,6 @@ public class HttpResult implements Serializable{
         this.content = content;
     }
 
-    /**
-     * @autho 董杨炀
-     * @time 2017年5月8日 下午3:37:23
-     * @return
-     */
     @Override
     public String toString() {
         return "HttpResult [statusCode=" + statusCode + ", content=" + content + "]";

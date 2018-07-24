@@ -17,11 +17,7 @@ public class BbsAutoRelayApplicationTests {
 	public void contextLoads() throws Exception {
 
 		BBSAction action = new ZhihuAction(0 ,null);
-		WebDriver webDriver = new ChromeDriver();
-		action.reply(webDriver);
-
-		webDriver.close();
-		webDriver.quit();
+		action.login(null,null,null);
 	}
 
 }

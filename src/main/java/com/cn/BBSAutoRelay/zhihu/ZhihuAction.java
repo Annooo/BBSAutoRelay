@@ -2,9 +2,10 @@ package com.cn.BBSAutoRelay.zhihu;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.common.BBSAction;
+import com.cn.BBSAutoRelay.httpClient.HttpResult;
 import com.cn.BBSAutoRelay.httpClient.IHttpClient;
 import com.cn.BBSAutoRelay.selenium.WebDriverPool;
-import com.google.gson.JsonObject;
+import com.cn.BBSAutoRelay.util.Base64Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -32,12 +33,13 @@ public class ZhihuAction implements BBSAction{
     private static JSONObject post_data;
 
     private static final String login_url = "https://www.zhihu.com/api/v3/oauth/sign_in";
-    private static final String captcha_url = "https://www.zhihu.com/api/v3/oauth/captcha?lang=cn";
+    private static final String captcha_url = "https://www.zhihu.com/api/v3/oauth/captcha?lang=en";
     private static final String check_url = "https://www.zhihu.com/inbox";
 
     static {
         headers = new HashMap();
-        headers.put("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+        //headers.put("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+        headers.put("User-Agent","Mozilla/5.0 (iPhone 84; CPU iPhone OS 10_3_3 like Mac OS X) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.0 MQQBrowser/7.8.0 ");
         headers.put("Referer","https://www.zhihu.com/signin?next=%2F");
         headers.put("Authorization","oauth c3cef7c66a1843f8b3a9e6a1e3160e20");
 
@@ -174,16 +176,19 @@ public class ZhihuAction implements BBSAction{
      * @return
      */
     private String check_captcha(IHttpClient request) throws Exception {
-        String result = request.doGet(this.captcha_url,null, headers);
-        System.out.println(result);
-        boolean show_captcha = JSONObject.parseObject(result).getBoolean("show_captcha");
+        HttpResult httpResult = request.doGet(this.captcha_url,null, headers);
+        System.out.println(httpResult);
+        boolean show_captcha = JSONObject.parseObject(httpResult.getContent()).getBoolean("show_captcha");
         //无验证码
         if(!show_captcha){
             return null;
         //有验证码，重新请求获取验证码
         }else{
-            result = request.doPost(this.captcha_url,null, headers);
-            System.out.println(result);
+            httpResult = request.doPut(this.captcha_url,null, null);
+            System.out.println(httpResult);
+            String img = JSONObject.parseObject(httpResult.getContent()).getString("img_base64");
+            System.out.println(img);
+            Base64Utils.Base64ToImage(img,"C:/Users/Administrator/Desktop/test1.jpg");
         }
 
         return null;

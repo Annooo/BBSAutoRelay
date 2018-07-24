@@ -15,17 +15,22 @@ import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.*;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -35,6 +40,7 @@ import org.apache.http.util.EntityUtils;
 import javax.net.ssl.SSLContext;
 
 /**
+ * httpclient工具类
  * @autho chenning
  * @time 2018年7月23日 09点56分
  */
@@ -52,7 +58,12 @@ public class IHttpClient {
     private static void init(){
         context = HttpClientContext.create();
         cookieStore = new BasicCookieStore();
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(Constants.TIMEOUT).setSocketTimeout(15000).build();
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(Constants.TIMEOUT)
+                .setSocketTimeout(15000)
+                //设置cookie标准
+                .setCookieSpec(CookieSpecs.STANDARD)
+                .build();
         httpClient = HttpClientBuilder.create()
                 //长连接
                 //.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
@@ -84,20 +95,24 @@ public class IHttpClient {
         return context;
     }
 
-    public String doGet(String url, Map<String, String> params, Map<String, String> headers) {
+    public HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers) {
         return doGet(url, params, headers, charset);
     }
 
-    public String doGetSSL(String url, Map<String, String> params, Map<String, String> headers) {
+    public HttpResult doGetSSL(String url, Map<String, String> params, Map<String, String> headers) {
         return doGetSSL(url, params, headers, charset);
     }
 
-    public String doPost(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
+    public HttpResult doPost(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
         return doPost(url, params, headers, charset);
     }
 
-    public String doPostJson(String url, Map<String, String> params, String json, Map<String, String> headers) throws Exception {
+    public HttpResult doPostJson(String url, Map<String, String> params, String json, Map<String, String> headers) throws Exception {
         return doPostJson(url, params, json, headers, charset);
+    }
+
+    public HttpResult doPut(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
+        return doPut(url, params, headers, charset);
     }
 
     /**
@@ -107,10 +122,11 @@ public class IHttpClient {
      * @param charset 编码格式
      * @return 页面内容
      */
-    private String doGet(String url, Map<String, String> params, Map<String, String> headers, String charset) {
+    private HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers, String charset) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
+        HttpResult httpResult = new HttpResult();
         try {
             if (params != null && !params.isEmpty()) {
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(params.size());
@@ -133,22 +149,23 @@ public class IHttpClient {
             }
             CloseableHttpResponse response = httpClient.execute(httpGet, context);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                httpGet.abort();
-                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
-            }
+//            if (statusCode != 200) {
+//                httpGet.abort();
+//                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
+//            }
+            httpResult.setStatusCode(statusCode);
             HttpEntity entity = response.getEntity();
             String result = null;
             if (entity != null) {
                 result = EntityUtils.toString(entity, "utf-8");
             }
             EntityUtils.consume(entity);
+            httpResult.setContent(result);
             response.close();
-            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return httpResult;
     }
 
     /**
@@ -159,11 +176,12 @@ public class IHttpClient {
      * @return 页面内容
      * @throws IOException
      */
-    private String doPost(String url, Map<String, String> params, Map<String, String> headers, String charset)
+    private HttpResult doPost(String url, Map<String, String> params, Map<String, String> headers, String charset)
             throws Exception {
         if (StringUtils.isBlank(url)) {
             return null;
         }
+        HttpResult httpResult = new HttpResult();
         List<NameValuePair> pairs = null;
         if (params != null && !params.isEmpty()) {
             pairs = new ArrayList<NameValuePair>(params.size());
@@ -189,24 +207,25 @@ public class IHttpClient {
         try {
             response = httpClient.execute(httpPost, context);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                httpPost.abort();
-                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
-            }
+//            if (statusCode != 200) {
+//                httpPost.abort();
+//                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
+//            }
+            httpResult.setStatusCode(statusCode);
             HttpEntity entity = response.getEntity();
             String result = null;
             if (entity != null) {
                 result = EntityUtils.toString(entity, "utf-8");
             }
             EntityUtils.consume(entity);
-            return result;
+            httpResult.setContent(result);
         } catch (ParseException e) {
             e.printStackTrace();
         } finally {
             if (response != null)
                 response.close();
         }
-        return null;
+        return httpResult;
     }
 
     /**
@@ -218,10 +237,11 @@ public class IHttpClient {
      * @return 页面内容
      * @throws Exception
      */
-    private String doPostJson(String url , Map<String, String> params, String json, Map<String, String> headers, String charset) throws Exception{
+    private HttpResult doPostJson(String url , Map<String, String> params, String json, Map<String, String> headers, String charset) throws Exception{
         if (StringUtils.isBlank(url)) {
             return null;
         }
+        HttpResult httpResult = new HttpResult();
         List<NameValuePair> pairs = null;
         if (params != null && !params.isEmpty()) {
             pairs = new ArrayList<NameValuePair>(params.size());
@@ -233,7 +253,6 @@ public class IHttpClient {
             }
         }
         HttpPost httpPost = new HttpPost(url);
-
         if (headers != null) {
             Set<String> keys = headers.keySet();
             for (Iterator<String> i = keys.iterator(); i.hasNext();) {
@@ -254,21 +273,83 @@ public class IHttpClient {
             response = httpClient.execute(httpPost, context);
             int statusCode = response.getStatusLine().getStatusCode();
             // 判断返回状态是否为200
-            if (statusCode != 200) {
-                httpPost.abort();
-                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
-            }
+//            if (statusCode != 200) {
+//                httpPost.abort();
+//                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
+//            }
+            httpResult.setStatusCode(statusCode);
             HttpEntity entity = response.getEntity();
             String result = null;
             if (entity != null) {
                 result = EntityUtils.toString(entity, "utf-8");
             }
             EntityUtils.consume(entity);
-            return result;
+            httpResult.setContent(result);
         } finally {
             if (response != null)
                 response.close();
         }
+        return httpResult;
+    }
+
+    /**
+     * HTTP Put 获取内容
+     * @param url 请求的url地址 ?之前的地址
+     * @param params 请求的参数
+     * @param charset 编码格式
+     * @return 页面内容
+     * @throws IOException
+     */
+    private HttpResult doPut(String url, Map<String, String> params, Map<String, String> headers, String charset)
+            throws Exception {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+        HttpResult httpResult = new HttpResult();
+        List<NameValuePair> pairs = null;
+        if (params != null && !params.isEmpty()) {
+            pairs = new ArrayList<NameValuePair>(params.size());
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                String value = entry.getValue();
+                if (value != null) {
+                    pairs.add(new BasicNameValuePair(entry.getKey(), value));
+                }
+            }
+        }
+        HttpPut httpPut = new HttpPut(url);
+        if (headers != null) {
+            Set<String> keys = headers.keySet();
+            for (Iterator<String> i = keys.iterator(); i.hasNext();) {
+                String key = (String) i.next();
+                httpPut.addHeader(key, headers.get(key));
+            }
+        }
+        if (pairs != null && pairs.size() > 0) {
+            httpPut.setEntity(new UrlEncodedFormEntity(pairs, charset));
+        }
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httpPut, context);
+            int statusCode = response.getStatusLine().getStatusCode();
+//            if (statusCode != 200) {
+//                httpPut.abort();
+//                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
+//            }
+            httpResult.setStatusCode(statusCode);
+            HttpEntity entity = response.getEntity();
+            String result = null;
+            if (entity != null) {
+                result = EntityUtils.toString(entity, "utf-8");
+            }
+            EntityUtils.consume(entity);
+            httpResult.setContent(result);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null)
+                response.close();
+        }
+        return httpResult;
     }
 
     /**
@@ -278,10 +359,11 @@ public class IHttpClient {
      * @param charset  编码格式
      * @return 页面内容
      */
-    private String doGetSSL(String url, Map<String, String> params, Map<String, String> headers, String charset) {
+    private HttpResult doGetSSL(String url, Map<String, String> params, Map<String, String> headers, String charset) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
+        HttpResult httpResult = new HttpResult();
         try {
             if (params != null && !params.isEmpty()) {
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(params.size());
@@ -299,22 +381,23 @@ public class IHttpClient {
             CloseableHttpClient httpsClient = createSSLClientDefault();
             CloseableHttpResponse response = httpsClient.execute(httpGet, context);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                httpGet.abort();
-                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
-            }
+//            if (statusCode != 200) {
+//                httpGet.abort();
+//                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
+//            }
+            httpResult.setStatusCode(statusCode);
             HttpEntity entity = response.getEntity();
             String result = null;
             if (entity != null) {
                 result = EntityUtils.toString(entity, "utf-8");
             }
             EntityUtils.consume(entity);
+            httpResult.setContent(result);
             response.close();
-            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return httpResult;
     }
 
     /**
