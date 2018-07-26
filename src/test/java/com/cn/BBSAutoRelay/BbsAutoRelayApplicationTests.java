@@ -17,7 +17,7 @@ public class BbsAutoRelayApplicationTests {
 	public void contextLoads() throws Exception {
 
 		BBSAction action = new ZhihuAction(0 ,null);
-		action.login(null,null,null);
+		action.login(null,"17620351934","chenning1");
 	}
 
 }

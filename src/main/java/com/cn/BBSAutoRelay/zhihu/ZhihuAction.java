@@ -1,21 +1,29 @@
 package com.cn.BBSAutoRelay.zhihu;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.common.BBSAction;
 import com.cn.BBSAutoRelay.httpClient.HttpResult;
 import com.cn.BBSAutoRelay.httpClient.IHttpClient;
 import com.cn.BBSAutoRelay.selenium.WebDriverPool;
 import com.cn.BBSAutoRelay.util.Base64Utils;
+import com.sun.crypto.provider.HmacSHA1;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.coyote.http2.ByteUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
+import org.python.bouncycastle.crypto.macs.HMac;
+import org.python.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +41,9 @@ public class ZhihuAction implements BBSAction{
     private static JSONObject post_data;
 
     private static final String login_url = "https://www.zhihu.com/api/v3/oauth/sign_in";
-    private static final String captcha_url = "https://www.zhihu.com/api/v3/oauth/captcha?lang=en";
+    private static final String captcha_url = "https://www.zhihu.com/api/v3/oauth/captcha?lang=cn";
     private static final String check_url = "https://www.zhihu.com/inbox";
+    private static final String crack_captcha_url = "http://39.108.101.181:5001/zhihu/cn";
 
     static {
         headers = new HashMap();
@@ -47,13 +56,13 @@ public class ZhihuAction implements BBSAction{
         post_data = JSONObject.parseObject("{" +
                 "        \"client_id\": \"c3cef7c66a1843f8b3a9e6a1e3160e20\"," +
                 "        \"grant_type\": \"password\"," +
-                "        \"timestamp\": "+System.currentTimeMillis()+"," +
+                "        \"timestamp\": "+String.valueOf(System.currentTimeMillis())+"," +
                 "        \"source\": \"com.zhihu.web\"," +
                 "        \"signature\": \"\"," +
                 "        \"username\": \"\"," +
                 "        \"password\": \"\"," +
                 "        \"captcha\": \"\"," +
-                "        \"lang\": \"cn\"," +
+                "        \"lang\": \"en\"," +
                 "        \"ref_source\": \"homepage\"," +
                 "        \"utm_source\": \"\"" +
                 "    }");
@@ -80,8 +89,18 @@ public class ZhihuAction implements BBSAction{
          */
         IHttpClient request = new IHttpClient();
 
-        post_data.put("captcha",check_captcha(request));
+        post_data.replace("username",userName);
+        post_data.replace("password",password);
+        post_data.replace("captcha",check_captcha(request));
 
+        System.out.println(post_data);
+
+        post_data.replace("signature",get_signature());
+
+        System.out.println(post_data);
+
+        HttpResult httpResult = request.doPost(login_url, JSONObject.parseObject(post_data.toJSONString(),Map.class), null);
+        System.out.println(httpResult);
 
         //this.logger.info("downloading page " + webDriver.getUrl());
         /*
@@ -175,7 +194,7 @@ public class ZhihuAction implements BBSAction{
      * 获取验证码
      * @return
      */
-    private String check_captcha(IHttpClient request) throws Exception {
+    private JSONObject check_captcha(IHttpClient request) throws Exception {
         HttpResult httpResult = request.doGet(this.captcha_url,null, headers);
         System.out.println(httpResult);
         boolean show_captcha = JSONObject.parseObject(httpResult.getContent()).getBoolean("show_captcha");
@@ -187,11 +206,45 @@ public class ZhihuAction implements BBSAction{
             httpResult = request.doPut(this.captcha_url,null, null);
             System.out.println(httpResult);
             String img = JSONObject.parseObject(httpResult.getContent()).getString("img_base64");
-            System.out.println(img);
+            //System.out.println(img);
             Base64Utils.Base64ToImage(img,"C:/Users/Administrator/Desktop/test1.jpg");
-        }
 
+            //识别验证码
+            JSONObject carck_result = carck_captcha(img);
+            System.out.println(carck_result);
+            if(carck_result.getString("status").equals("success")){
+                JSONObject result = new JSONObject();
+                result.put("img_size", JSONArray.parseArray("[200,44]"));
+                result.put("input_points",carck_result.getJSONArray("positions"));
+
+                return result;
+            }
+        }
         return null;
+    }
+
+    private JSONObject carck_captcha(String img_base64) throws Exception {
+        IHttpClient httpClient = new IHttpClient();
+        Map<String, String> postParams = new HashMap<>();
+        postParams.put("img_base64", img_base64);
+        HttpResult httpResult = httpClient.doPost(crack_captcha_url, postParams,null);
+        return JSONObject.parseObject(httpResult.getContent());
+    }
+
+    private String get_signature() throws Exception {
+        //根据给定的字节数组构造一个密钥,第二参数指定一个密钥算法的名称
+        SecretKeySpec signinKey = new SecretKeySpec("d1b964811afb40118a12068ff74a12f4".getBytes(), "HmacSHA1");
+        //生成一个指定 Mac 算法 的 Mac 对象
+        Mac mac = Mac.getInstance("HmacSHA1");
+        //用给定密钥初始化 Mac 对象
+        mac.init(signinKey);
+        //完成 Mac 操作
+        mac.update(post_data.getString("grant_type").getBytes());
+        mac.update(post_data.getString("client_id").getBytes());
+        mac.update(post_data.getString("source").getBytes());
+        mac.update(post_data.getString("timestamp").getBytes());
+
+        return new String(ByteUtils.toHexString(mac.doFinal()));
     }
 
     public static void main(String[] args) {

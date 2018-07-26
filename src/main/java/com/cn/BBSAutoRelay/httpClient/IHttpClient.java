@@ -186,7 +186,7 @@ public class IHttpClient {
         if (params != null && !params.isEmpty()) {
             pairs = new ArrayList<NameValuePair>(params.size());
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                String value = entry.getValue();
+                String value = String.valueOf(entry.getValue());
                 if (value != null) {
                     pairs.add(new BasicNameValuePair(entry.getKey(), value));
                 }
