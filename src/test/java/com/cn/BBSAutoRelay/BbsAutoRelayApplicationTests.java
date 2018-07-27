@@ -18,20 +18,20 @@ import javax.annotation.Resource;
 @SpringBootTest
 public class BbsAutoRelayApplicationTests {
 
-	@Autowired
-	private ZhihuAction zhihuAction;
+//	@Autowired
+//	private ZhihuAction zhihuAction;
 
 	@Test
 	public void contextLoads() throws Exception {
 
-		WebDriver webDriver = new ChromeDriver();
-		//BBSAction action = new ZhihuAction(0 ,null);
-		//action.login(null,"17620351934","chenning1");
-		//action.reply(null);
-		zhihuAction.register(webDriver);
-
-		webDriver.quit();;
-		webDriver.close();
+//		WebDriver webDriver = new ChromeDriver();
+//		//BBSAction action = new ZhihuAction(0 ,null);
+//		//action.login(null,"17620351934","chenning1");
+//		//action.reply(null);
+//		zhihuAction.register(webDriver);
+//
+//		webDriver.quit();;
+//		webDriver.close();
 
 	}
 

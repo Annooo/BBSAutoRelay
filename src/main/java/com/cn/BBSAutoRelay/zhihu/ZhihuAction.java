@@ -7,7 +7,6 @@ import com.cn.BBSAutoRelay.httpClient.HttpResult;
 import com.cn.BBSAutoRelay.httpClient.IHttpClient;
 import com.cn.BBSAutoRelay.selenium.WebDriverPool;
 import com.cn.BBSAutoRelay.sms.YmAPI;
-import com.cn.BBSAutoRelay.util.Base64Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
