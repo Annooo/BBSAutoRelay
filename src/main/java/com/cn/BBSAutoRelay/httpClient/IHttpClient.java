@@ -22,6 +22,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.cookie.Cookie;
@@ -47,7 +48,7 @@ import javax.net.ssl.SSLContext;
 public class IHttpClient {
 
     private static CloseableHttpClient httpClient;
-    private static HttpClientContext context = null;
+    private HttpClientContext context = null;
     private static CookieStore cookieStore = null;
 
     private static String CHARSET = "UTF-8";
@@ -55,7 +56,7 @@ public class IHttpClient {
     private static String charset;
 
     // 采用静态代码块，初始化超时时间配置，再根据配置生成默认httpClient对象
-    private static void init(){
+    private void init(){
         context = HttpClientContext.create();
         cookieStore = new BasicCookieStore();
         RequestConfig config = RequestConfig.custom()
@@ -91,12 +92,12 @@ public class IHttpClient {
         init();
     }
 
-    public static HttpClientContext getContext() {
+    public HttpClientContext getContext() {
         return context;
     }
 
     public HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers) {
-        return doGet(url, params, headers, charset);
+        return doGet(url, params, headers, false ,charset);
     }
 
     public HttpResult doGetSSL(String url, Map<String, String> params, Map<String, String> headers) {
@@ -122,7 +123,7 @@ public class IHttpClient {
      * @param charset 编码格式
      * @return 页面内容
      */
-    private HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers, String charset) {
+    private HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers, boolean redirects, String charset) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
@@ -147,12 +148,9 @@ public class IHttpClient {
                     httpGet.addHeader(key, headers.get(key));
                 }
             }
+            httpGet.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS, redirects);
             CloseableHttpResponse response = httpClient.execute(httpGet, context);
             int statusCode = response.getStatusLine().getStatusCode();
-//            if (statusCode != 200) {
-//                httpGet.abort();
-//                throw new RuntimeException("IHttpClient,error status code :" + statusCode);
-//            }
             httpResult.setStatusCode(statusCode);
             HttpEntity entity = response.getEntity();
             String result = null;
@@ -165,6 +163,7 @@ public class IHttpClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("get close cookie:"+context.getCookieStore());
         return httpResult;
     }
 
@@ -205,7 +204,9 @@ public class IHttpClient {
         }
         CloseableHttpResponse response = null;
         try {
+            System.out.println("post brfore cookie:"+context.getCookieStore());
             response = httpClient.execute(httpPost, context);
+            System.out.println("post after cookie:"+context.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
 //            if (statusCode != 200) {
 //                httpPost.abort();
@@ -225,6 +226,7 @@ public class IHttpClient {
             if (response != null)
                 response.close();
         }
+        System.out.println("post close cookie:"+context.getCookieStore());
         return httpResult;
     }
 
@@ -329,7 +331,9 @@ public class IHttpClient {
         }
         CloseableHttpResponse response = null;
         try {
+            System.out.println("put brfore cookie:"+context.getCookieStore());
             response = httpClient.execute(httpPut, context);
+            System.out.println("put after cookie:"+context.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
 //            if (statusCode != 200) {
 //                httpPut.abort();
@@ -349,6 +353,7 @@ public class IHttpClient {
             if (response != null)
                 response.close();
         }
+        System.out.println("put close cookie:"+context.getCookieStore());
         return httpResult;
     }
 
@@ -441,7 +446,7 @@ public class IHttpClient {
     /**
      * 把当前cookie从控制台输出出来
      */
-    public static void printCookies() {
+    public void printCookies() {
         cookieStore = context.getCookieStore();
         List<Cookie> cookies = cookieStore.getCookies();
         for (Cookie cookie : cookies) {
@@ -455,7 +460,7 @@ public class IHttpClient {
      * @param key
      * @return
      */
-    public static boolean checkCookie(String key) {
+    public boolean checkCookie(String key) {
         cookieStore = context.getCookieStore();
         List<Cookie> cookies = cookieStore.getCookies();
         boolean res = false;
