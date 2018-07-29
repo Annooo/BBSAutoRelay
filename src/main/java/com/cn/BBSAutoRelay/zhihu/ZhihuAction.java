@@ -5,8 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.common.BBSAction;
 import com.cn.BBSAutoRelay.httpClient.HttpResult;
 import com.cn.BBSAutoRelay.httpClient.IHttpClient;
+import com.cn.BBSAutoRelay.model.Account;
 import com.cn.BBSAutoRelay.selenium.WebDriverPool;
+import com.cn.BBSAutoRelay.service.AccountService;
 import com.cn.BBSAutoRelay.sms.YmAPI;
+import com.cn.BBSAutoRelay.util.ByteUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -16,7 +19,6 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.python.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +54,9 @@ public class ZhihuAction implements BBSAction{
     private static final String crack_captcha_url = "http://39.108.101.181:5001/zhihu/cn";
 
     private static IHttpClient request;
+
+    @Autowired
+    private AccountService accountService;
 
     static {
         headers = new HashMap();
@@ -137,6 +143,14 @@ public class ZhihuAction implements BBSAction{
         signin.click();
 
         System.out.println(webDriver.manage().getCookies());
+
+        //保存账号
+        Account account1 = new Account();
+        account1.setUserName(phone);
+        account1.setPassword("aaa"+phone);
+        account1.setCookies(webDriver.manage().getCookies().toString());
+        account1.setCreateTime(new Date());
+        accountService.addAccount(account1);
 
         try {
             Thread.sleep(100000);
@@ -297,7 +311,7 @@ public class ZhihuAction implements BBSAction{
             System.out.println(httpResult);
             String img = JSONObject.parseObject(httpResult.getContent()).getString("img_base64");
             //System.out.println(img);
-            Base64Utils.Base64ToImage(img,"C:/Users/Administrator/Desktop/test1.jpg");
+            //Base64Utils.Base64ToImage(img,"C:/Users/Administrator/Desktop/test1.jpg");
 
             //识别验证码
             JSONObject carck_result = carck_captcha(img);

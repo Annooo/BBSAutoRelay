@@ -4,6 +4,7 @@ import com.cn.BBSAutoRelay.model.User;
 import com.cn.BBSAutoRelay.model.UserExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 public interface UserMapper {
     int countByExample(UserExample example);
@@ -27,4 +28,7 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    List<User> selectAllUser();
+
 }

@@ -3,15 +3,15 @@ server:
 
 spring:
     datasource:
-        name: mysql_test
+        name: bbs
         type: com.alibaba.druid.pool.DruidDataSource
         #druid相关配置
         druid:
           #监控统计拦截的filters
-          filters: stat
+          #filters: stat
           driver-class-name: com.mysql.jdbc.Driver
           #基本属性
-          url: jdbc:mysql://127.0.0.1:3306/mytest?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+          url: jdbc:mysql://localhost:3306/bbs
           username: root
           password: 000000
           #配置初始化大小/最小/最大
@@ -46,6 +46,6 @@ pagehelper:
 
 #易码账号
 ym:
-  username:xiaoyouzi
-  password:chenning
-  token:007217998e68856a5a9c22d2692e11a75118981b
+  username: xiaoyouzi
+  password: chenning
+  token: 007217998e68856a5a9c22d2692e11a75118981b

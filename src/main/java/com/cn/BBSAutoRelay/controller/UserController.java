@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @ResponseBody
-    @GetMapping("/all")
+    @GetMapping("/all/{pageNum}/{pageSize}")
     public Object findAllUser(
             @RequestParam(name = "pageNum", required = false, defaultValue = "1")
                     int pageNum,

@@ -1,6 +1,6 @@
 package com.cn.BBSAutoRelay.service.impl;
 
-import com.cn.BBSAutoRelay.dao.UserDao;
+import com.cn.BBSAutoRelay.mapper.UserMapper;
 import com.cn.BBSAutoRelay.model.User;
 import com.cn.BBSAutoRelay.service.UserService;
 import com.github.pagehelper.PageHelper;
@@ -17,12 +17,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserDao userDao;//这里会报错，但是并不会影响
+    private UserMapper userMapper;//这里会报错，但是并不会影响
 
     @Override
     public int addUser(User user) {
 
-        return userDao.insert(user);
+        return userMapper.insert(user);
     }
 
     /*
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public PageInfo<User> findAllUser(int pageNum, int pageSize) {
         //将参数传给这个方法就可以实现物理分页了，非常简单。
         PageHelper.startPage(pageNum, pageSize);
-        List<User> Users = userDao.selectUsers();
+        List<User> Users = userMapper.selectAllUser();
         PageInfo result = new PageInfo(Users);
         return result;
     }
