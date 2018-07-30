@@ -1,5 +1,14 @@
 server:
-  port: 8080
+  port: 8088
+
+spring:
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+
+web:
+  upload-path: C:/Hpsy/
 
 spring:
     datasource:
@@ -8,12 +17,12 @@ spring:
         #druid相关配置
         druid:
           #监控统计拦截的filters
-          #filters: stat
+          filters: stat #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：监控统计用的filter:stat日志用的filter:log4j防御sql注入的filter:wall
           driver-class-name: com.mysql.jdbc.Driver
           #基本属性
-          url: jdbc:mysql://localhost:3306/bbs
-          username: root
-          password: 000000
+          url: jdbc:mysql://localhost:3306/bbs?useUnicode=true&characterEncoding=utf8
+          username: bbs
+          password: "000000" #加引号保证准确
           #配置初始化大小/最小/最大
           initial-size: 1
           min-idle: 1
@@ -31,6 +40,20 @@ spring:
           #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
           pool-prepared-statements: false
           max-pool-prepared-statement-per-connection-size: 20
+          stat-view-servlet:
+            enabled: true
+            url-pattern: "/druid/*"
+            login-username: admin
+            login-password: admin
+          web-stat-filter:
+            enabled: true
+            url-pattern: "/*"
+            exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+          filter:
+            stat:
+              db-type: mysql
+              log-slow-sql: true
+              slow-sql-millis: 2000
 
 mybatis:
     mapper-locations: classpath:mapper/*.xml

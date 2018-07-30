@@ -72,7 +72,7 @@ public class IHttpClient {
                 //.setRedirectStrategy(new DefaultRedirectStrategy())
                 .setDefaultRequestConfig(config)
                 .setDefaultCookieStore(cookieStore)
-                .setProxy(new HttpHost("127.0.0.1",8888))
+                //.setProxy(new HttpHost("127.0.0.1",8888))
                 .build();
     }
 

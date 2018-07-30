@@ -1,6 +1,7 @@
 package com.cn.BBSAutoRelay.service;
 
 import com.cn.BBSAutoRelay.model.Account;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface AccountService {
      * 查询账号信息
      * @return
      */
-    List<Account> queryAccounts();
+    PageInfo queryAccounts(int pageNum, int pageSize);
 }
