@@ -10,6 +10,14 @@ spring:
 web:
   upload-path: C:/Hpsy/
 
+#关闭thymeleaf缓存
+spring:
+  thymeleaf:
+    cache: false
+    #去掉thymeleaf的严格的模板校验
+    mode: HTML5
+    encoding: UTF-8
+
 spring:
     datasource:
         name: bbs

@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.*;
  * Created by Administrator on 2017/8/16.
  */
 @Controller
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/account")
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
 
+    @RequestMapping("/goAccountList")
+    public String goAccount(){
+        return "account/accountList";
+    }
     @ResponseBody
     @PostMapping("/add")
     public int addAccount(Account account){
@@ -23,8 +27,8 @@ public class AccountController {
     }
 
     @ResponseBody
-    @GetMapping("/all/{pageNum}/{pageSize}")
-    public Object findAllAccount(
+    @GetMapping("/queryAccountList/{pageNum}/{pageSize}")
+    public Object queryAccountList(
             @PathVariable(name = "pageNum", required = false)
                     int pageNum,
             @PathVariable(name = "pageSize", required = false)
