@@ -7,10 +7,11 @@
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="cookies" jdbcType="VARCHAR" property="cookies" />
     <result column="login_time" jdbcType="TIMESTAMP" property="loginTime" />
+    <result column="status" jdbcType="CHAR" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_name, password, cookies, login_time, create_time
+    id, user_name, password, cookies, login_time, status, create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -24,11 +25,11 @@
   </delete>
   <insert id="insert" parameterType="com.cn.BBSAutoRelay.model.Account">
     insert into tb_account (id, user_name, password, 
-      cookies, login_time, create_time
-      )
+      cookies, login_time, status, 
+      create_time)
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{cookies,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
-      )
+      #{cookies,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.cn.BBSAutoRelay.model.Account">
     insert into tb_account
@@ -47,6 +48,9 @@
       </if>
       <if test="loginTime != null">
         login_time,
+      </if>
+      <if test="status != null">
+        status,
       </if>
       <if test="createTime != null">
         create_time,
@@ -68,6 +72,9 @@
       <if test="loginTime != null">
         #{loginTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -88,6 +95,9 @@
       <if test="loginTime != null">
         login_time = #{loginTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -100,6 +110,7 @@
       password = #{password,jdbcType=VARCHAR},
       cookies = #{cookies,jdbcType=VARCHAR},
       login_time = #{loginTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=CHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -109,5 +120,4 @@
     <include refid="Base_Column_List" />
     from tb_account
   </select>
-
 </mapper>

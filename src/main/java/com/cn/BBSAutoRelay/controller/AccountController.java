@@ -1,10 +1,14 @@
 package com.cn.BBSAutoRelay.controller;
 
 import com.cn.BBSAutoRelay.model.Account;
+import com.cn.BBSAutoRelay.model.ResultMap;
 import com.cn.BBSAutoRelay.service.AccountService;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/8/16.
@@ -18,7 +22,7 @@ public class AccountController {
 
     @RequestMapping("/goAccountList")
     public String goAccount(){
-        return "account/accountList";
+        return "/account/accountList";
     }
     @ResponseBody
     @PostMapping("/add")
@@ -27,12 +31,11 @@ public class AccountController {
     }
 
     @ResponseBody
-    @GetMapping("/queryAccountList/{pageNum}/{pageSize}")
-    public Object queryAccountList(
-            @PathVariable(name = "pageNum", required = false)
-                    int pageNum,
-            @PathVariable(name = "pageSize", required = false)
-                    int pageSize){
-        return accountService.queryAccounts(pageNum,pageSize);
+    @GetMapping("/queryAccountList")
+    public ResultMap queryAccountList(
+            @RequestParam(name = "pageNum", required = false) int pageNum,
+            @RequestParam(name = "pageSize", required = false) int pageSize){
+        PageInfo page = accountService.queryAccounts(pageNum,pageSize);
+        return new ResultMap("", page.getList(),0, page.getTotal());
     }
 }

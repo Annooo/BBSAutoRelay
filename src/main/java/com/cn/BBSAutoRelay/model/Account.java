@@ -13,6 +13,8 @@ public class Account {
 
     private Date loginTime;
 
+    private String status;
+
     private Date createTime;
 
     public Integer getId() {
@@ -55,23 +57,19 @@ public class Account {
         this.loginTime = loginTime;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", cookies='" + cookies + '\'' +
-                ", loginTime=" + loginTime +
-                ", createTime=" + createTime +
-                '}';
     }
 }
