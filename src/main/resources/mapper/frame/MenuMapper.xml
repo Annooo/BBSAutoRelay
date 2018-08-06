@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.BBSAutoRelay.mapper.frame.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.cn.BBSAutoRelay.model.frame.Menu">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="menu_id" jdbcType="BIGINT" property="menuId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="href" jdbcType="VARCHAR" property="href" />
+    <result column="perms" jdbcType="VARCHAR" property="perms" />
+    <result column="spread" jdbcType="VARCHAR" property="spread" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="sorting" jdbcType="BIGINT" property="sorting" />
+  </resultMap>
+</mapper>

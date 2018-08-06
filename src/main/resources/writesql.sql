@@ -158,15 +158,15 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 INSERT INTO `sys_user` VALUES ('1', 'wyait', '12316596566', 'aaa', 'c33367701511b4f6020ec61ded352059', null, '2017-12-29 17:27:23', '2018-01-09 13:34:33', '0', '0', '181907', '2018-01-17 13:42:45', '0');
 INSERT INTO `sys_user` VALUES ('3', 'wy1', '11155556667', 'a11', 'c33367701511b4f6020ec61ded352059', '1', '2018-01-01 15:17:19', '2018-04-22 21:14:58', '0', '0', null, null, '0');
-INSERT INTO `sys_user` VALUES ('5', 'wy23', '11155552233', 'a', 'c33367701511b4f6020ec61ded352059', null, '2018-01-02 13:41:29', '2018-01-10 15:55:37', '0', '1', null, null, '0');
+INSERT INTO `sys_user` VALUES ('5', 'wy23', '11155552233', 'tk_generatorConfig.xml', 'c33367701511b4f6020ec61ded352059', null, '2018-01-02 13:41:29', '2018-01-10 15:55:37', '0', '1', null, null, '0');
 INSERT INTO `sys_user` VALUES ('6', 'wyyyy', '12356456542', 'afdfd123', 'c33367701511b4f6020ec61ded352059', null, '2018-01-02 13:44:04', '2018-01-02 16:56:05', '0', '1', null, null, '0');
 INSERT INTO `sys_user` VALUES ('7', 'wwwww', '11155623232', '123456', 'c33367701511b4f6020ec61ded352059', null, '2018-01-02 13:44:23', null, '1', '0', null, null, '0');
 INSERT INTO `sys_user` VALUES ('8', 'manage', '12345678911', '359818226@.com', 'e10adc3949ba59abbe56e057f20f883e', null, '2018-01-04 16:51:21', '2018-01-08 21:02:38', '0', '0', null, null, '0');
-INSERT INTO `sys_user` VALUES ('10', 'b', '12345678977', 'a', 'c33367701511b4f6020ec61ded352059', '1', '2018-01-09 10:30:56', '2018-04-22 21:27:53', '0', '0', null, null, '0');
+INSERT INTO `sys_user` VALUES ('10', 'b', '12345678977', 'tk_generatorConfig.xml', 'c33367701511b4f6020ec61ded352059', '1', '2018-01-09 10:30:56', '2018-04-22 21:27:53', '0', '0', null, null, '0');
 INSERT INTO `sys_user` VALUES ('11', 'e', '12345678911', 'e', 'c33367701511b4f6020ec61ded352059', null, '2018-01-09 10:31:08', null, '0', '0', null, null, '0');
-INSERT INTO `sys_user` VALUES ('12', 'ee', '12345678919', 'a', 'c33367701511b4f6020ec61ded352059', '1', '2018-01-09 10:31:33', '2018-04-22 21:28:01', '0', '0', null, null, '0');
+INSERT INTO `sys_user` VALUES ('12', 'ee', '12345678919', 'tk_generatorConfig.xml', 'c33367701511b4f6020ec61ded352059', '1', '2018-01-09 10:31:33', '2018-04-22 21:28:01', '0', '0', null, null, '0');
 INSERT INTO `sys_user` VALUES ('13', '456', '12345678888', 'e', 'c33367701511b4f6020ec61ded352059', null, '2018-01-09 10:31:46', null, '0', '0', null, null, '0');
-INSERT INTO `sys_user` VALUES ('14', '89', '12345612222', 'a', 'c33367701511b4f6020ec61ded352059', null, '2018-01-09 10:31:58', null, '0', '0', null, null, '0');
+INSERT INTO `sys_user` VALUES ('14', '89', '12345612222', 'tk_generatorConfig.xml', 'c33367701511b4f6020ec61ded352059', null, '2018-01-09 10:31:58', null, '0', '0', null, null, '0');
 INSERT INTO `sys_user` VALUES ('15', 'aa', '12345678915', 'ee1', 'c33367701511b4f6020ec61ded352059', null, '2018-01-09 10:32:12', '2018-01-09 13:29:12', '0', '0', null, null, '0');
 INSERT INTO `sys_user` VALUES ('16', 'tty', '12345678521', 'aa', 'c33367701511b4f6020ec61ded352059', null, '2018-01-09 13:32:17', '2018-01-09 13:45:58', '0', '0', null, null, '0');
 INSERT INTO `sys_user` VALUES ('17', 'oo', '12345666666', 'qq', 'c33367701511b4f6020ec61ded352059', '1', '2018-01-09 13:51:01', '2018-04-24 19:30:01', '0', '0', null, null, '0');

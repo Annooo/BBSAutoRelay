@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context defaultModelType="flat" id="mysql" targetRuntime="MyBatis3Simple">
+        <!-- 生成的Java文件的编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 生成根Mapper，用户可以看后边代码 -->
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.cn.BBSAutoRelay.common.BaseMapper"/>
+        </plugin>
+
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1/bbs" userId="root" password="000000">
+        </jdbcConnection>
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="com.cn.BBSAutoRelay.model.frame"
+                            targetProject="src/main/java">
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="mapper.frame"
+                         targetProject="src/main/resources">
+        </sqlMapGenerator>
+
+        <!--
+            1，ANNOTATEDMAPPER：会生成使用Mapper接口+Annotation的方式创建（SQL生成在annotation中），不会生成对应的XML；
+            2，XMLMAPPER：会生成Mapper接口，接口完全依赖XML；
+        -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.cn.BBSAutoRelay.mapper.frame"
+                             targetProject="src/main/java">
+        </javaClientGenerator>
+
+        <!--<table schema="bbs" tableName="tb_account" domainObjectName="Account"></table>-->
+        <table schema="" tableName="tb_log" domainObjectName="Log"></table>
+        <table schema="" tableName="tb_menu" domainObjectName="Menu"></table>
+        <table schema="" tableName="tb_role_menu" domainObjectName="RolesMenu"></table>
+        <table schema="" tableName="tb_role" domainObjectName="Role"></table>
+        <table schema="" tableName="tb_user" domainObjectName="User"></table>
+    </context>
+</generatorConfiguration>

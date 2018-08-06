@@ -185,7 +185,7 @@ var ValidateUtils = {
         if(weixin==''|| $.trim(weixin).length<1){
             return "请您输入的微信号 ";
         }
-        //^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/
+        //^[tk_generatorConfig.xml-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/
         if(!weixin.match(/^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/)){
             $("input[name='wxmpNum']").val("");
             $("input[name='wxmpNum']").focus();

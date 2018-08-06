@@ -12,15 +12,15 @@
         </a>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <!--<ul class="layui-nav layui-layout-left">-->
-            <!--<li class="layui-nav-item"><a href="">控制台</a></li>-->
-            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>-->
-            <!--<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <!--<li class="layui-nav-item"><tk_generatorConfig.xml href="">控制台</tk_generatorConfig.xml></li>-->
+            <!--<li class="layui-nav-item"><tk_generatorConfig.xml href="">商品管理</tk_generatorConfig.xml></li>-->
+            <!--<li class="layui-nav-item"><tk_generatorConfig.xml href="">用户</tk_generatorConfig.xml></li>-->
             <!--<li class="layui-nav-item">-->
-                <!--<a href="javascript:;">其它系统</a>-->
+                <!--<tk_generatorConfig.xml href="javascript:;">其它系统</tk_generatorConfig.xml>-->
                 <!--<dl class="layui-nav-child">-->
-                    <!--<dd><a href="">邮件管理</a></dd>-->
-                    <!--<dd><a href="">消息管理</a></dd>-->
-                    <!--<dd><a href="">授权管理</a></dd>-->
+                    <!--<dd><tk_generatorConfig.xml href="">邮件管理</tk_generatorConfig.xml></dd>-->
+                    <!--<dd><tk_generatorConfig.xml href="">消息管理</tk_generatorConfig.xml></dd>-->
+                    <!--<dd><tk_generatorConfig.xml href="">授权管理</tk_generatorConfig.xml></dd>-->
                 <!--</dl>-->
             <!--</li>-->
         <!--</ul>-->
@@ -44,24 +44,24 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <!--<ul class="layui-nav layui-nav-tree"  lay-filter="test">-->
                 <!--<li class="layui-nav-item layui-nav-itemed">-->
-                    <!--<a class="" href="javascript:;">所有商品</a>-->
+                    <!--<tk_generatorConfig.xml class="" href="javascript:;">所有商品</tk_generatorConfig.xml>-->
                     <!--<dl class="layui-nav-child">-->
-                        <!--<dd><a href="javascript:;">列表一</a></dd>-->
-                        <!--<dd><a href="javascript:;">列表二</a></dd>-->
-                        <!--<dd><a href="javascript:;">列表三</a></dd>-->
-                        <!--<dd><a href="">超链接</a></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="javascript:;">列表一</tk_generatorConfig.xml></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="javascript:;">列表二</tk_generatorConfig.xml></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="javascript:;">列表三</tk_generatorConfig.xml></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="">超链接</tk_generatorConfig.xml></dd>-->
                     <!--</dl>-->
                 <!--</li>-->
                 <!--<li class="layui-nav-item">-->
-                    <!--<a href="javascript:;">解决方案</a>-->
+                    <!--<tk_generatorConfig.xml href="javascript:;">解决方案</tk_generatorConfig.xml>-->
                     <!--<dl class="layui-nav-child">-->
-                        <!--<dd><a href="javascript:;">列表一</a></dd>-->
-                        <!--<dd><a href="javascript:;">列表二</a></dd>-->
-                        <!--<dd><a href="">超链接</a></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="javascript:;">列表一</tk_generatorConfig.xml></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="javascript:;">列表二</tk_generatorConfig.xml></dd>-->
+                        <!--<dd><tk_generatorConfig.xml href="">超链接</tk_generatorConfig.xml></dd>-->
                     <!--</dl>-->
                 <!--</li>-->
-                <!--<li class="layui-nav-item"><a href="">云市场</a></li>-->
-                <!--<li class="layui-nav-item"><a href="">发布商品</a></li>-->
+                <!--<li class="layui-nav-item"><tk_generatorConfig.xml href="">云市场</tk_generatorConfig.xml></li>-->
+                <!--<li class="layui-nav-item"><tk_generatorConfig.xml href="">发布商品</tk_generatorConfig.xml></li>-->
             <!--</ul>-->
         </div>
     </div>
@@ -79,7 +79,11 @@
     </div>
 </div>
 <script>
-    //JavaScript代码区域
+    /**
+     * 菜单
+     * */
+        //获取路径uri
+    var pathUri=window.location.href;
     $(function(){
         layui.use('element', function(){
             var element = layui.element;
@@ -87,7 +91,7 @@
             $.get("/auth/getUserPerms",function(data){
                 if(data!=null){
                     getMenus(data);
-                    element.render('nav');
+                    element.render('nav',"test");
                 }else{
                     layer.alert("权限不足，请联系管理员",function () {
                         //退出
@@ -104,7 +108,7 @@
         for(var i=0;i < data.length;i++){
             var node=data[i];
             if( node.istype==0){
-                if(node.pId==0){
+                if(node.pid==0){
                     var li=$("<li class='layui-nav-item' flag='"+node.id+"'></li>");
                     //父级无page
                     var a=$("<a class='' href='javascript:;'>"+node.name+"</a>");
@@ -132,13 +136,14 @@
         }
         $(".layui-side-scroll").append(ul);
     }
+
     //根据菜单主键id获取下级菜单
     //id：菜单主键id
     //arry：菜单数组信息
     function getParentArry(id, arry) {
         var newArry = new Array();
         for (var x in arry) {
-            if (arry[x].pId == id)
+            if (arry[x].pid == id)
                 newArry.push(arry[x]);
         }
         return newArry;

@@ -54,7 +54,7 @@ function generateUUID(len, radix) {
 /**
  * GUID是一种由算法生成的二进制长度为128位的数字标识符。
  * GUID 的格式为“xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx”，
- * 其中的 x 是 0-9 或 a-f 范围内的一个32位十六进制数。在理想情况下，任何计算机和计算机集群都不会生成两个相同的GUID。
+ * 其中的 x 是 0-9 或 tk_generatorConfig.xml-f 范围内的一个32位十六进制数。在理想情况下，任何计算机和计算机集群都不会生成两个相同的GUID。
  * @returns {string}
  */
 function uuid() {
@@ -67,7 +67,7 @@ function uuid() {
     return uuid;
 };
 //货币格式化
-//Extend the default Number object with a formatMoney() method:
+//Extend the default Number object with tk_generatorConfig.xml formatMoney() method:
 //usage: someVar.formatMoney(decimalPlaces, symbol, thousandsSeparator, decimalSeparator)
 //defaults: (2, "$", ",", ".")
 Number.prototype.formatMoney = function (places, symbol, thousand, decimal) {

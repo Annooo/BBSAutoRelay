@@ -5,7 +5,7 @@ spring:
   mvc:
     static-path-pattern: /**
   resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/,file:${web.upload-path}
 
 web:
   upload-path: C:/Hpsy/
@@ -64,8 +64,13 @@ spring:
               slow-sql-millis: 2000
 
 mybatis:
-    mapper-locations: classpath:mapper/*.xml
+    mapper-locations: classpath:mapper/**/*.xml
     type-aliases-package: com.cn.BBSAutoRelay.model
+#通用Mapper
+mapper:
+    mappers: com.cn.BBSAutoRelay.common.BaseMapper
+    not-empty: false
+    identity: MYSQL
 
 #pagehelper
 pagehelper:
@@ -74,6 +79,25 @@ pagehelper:
     supportMethodsArguments: true
     params: count=countSql
     returnPageInfo: check
+
+logging:
+    level:
+        com.cn.BBSAutoRelay.mapper: debug
+
+
+# httpClient
+httpclient:
+    config:
+        proxyhost: 192.168.10.120 # 代理的host  暂无
+        proxyPort: 8080 # 代理端口
+        retryTime: 2 # 连接超时或异常重试次数
+        keepAliveTime: 30 # 长连接保持时间，单位为s
+        connMaxTotal: 20 # 连接池最大连接数
+        maxPerRoute: 20
+        connectTimeout: 3000 # 连接超时时间，单位ms
+        connectRequestTimeout: 2000 # 请求超时时间
+        socketTimeout: 3000 # sock超时时间
+        timeToLive: 10 # 连接存活时间，单位s
 
 #易码账号
 ym:
