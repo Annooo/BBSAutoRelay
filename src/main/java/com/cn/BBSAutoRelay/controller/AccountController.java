@@ -1,5 +1,6 @@
 package com.cn.BBSAutoRelay.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.annotation.LoggerManage;
 import com.cn.BBSAutoRelay.model.Account;
 import com.cn.BBSAutoRelay.model.ResultMap;
@@ -39,5 +40,12 @@ public class AccountController {
             @RequestParam(name = "pageSize", required = false) int pageSize){
         PageInfo page = accountService.queryAccounts(pageNum,pageSize);
         return new ResultMap("", page.getList(),0, page.getTotal());
+    }
+
+    @LoggerManage(description = "滑稽")
+    @ResponseBody
+    @GetMapping("/queryPostedRecord")
+    public Object queryPostedRecord(Account account){
+        return accountService.queryPostedRecord(account);
     }
 }

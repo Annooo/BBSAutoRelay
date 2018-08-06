@@ -1,5 +1,6 @@
 package com.cn.BBSAutoRelay.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.mapper.AccountMapper;
 import com.cn.BBSAutoRelay.model.Account;
 import com.cn.BBSAutoRelay.service.AccountService;
@@ -46,5 +47,10 @@ public class AccountServiceImpl implements AccountService{
         List<Account> accounts = accountMapper.selectAll();
         PageInfo result = new PageInfo(accounts);
         return result;
+    }
+
+    @Override
+    public JSONObject queryPostedRecord(Account account) {
+        return null;
     }
 }

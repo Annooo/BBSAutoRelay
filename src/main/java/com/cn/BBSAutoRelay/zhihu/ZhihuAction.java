@@ -107,14 +107,12 @@ public class ZhihuAction implements BBSAction{
 
     @Override
     public void register(WebDriver webDriver) throws Exception {
-        String token = ymAPI.getToken();
-        String phone = ymAPI.getPhone("891","",token);
         webDriver.get("https://www.zhihu.com/");
 
         // 设置页面加载时间为5秒
         webDriver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
         webDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-/*
+
 //        WebElement webElement = webDriver.findElement(By.xpath("/html"));
 //        String content = webElement.getAttribute("outerHTML");
         //System.out.println(content);
@@ -148,8 +146,6 @@ public class ZhihuAction implements BBSAction{
 
         String token = ymAPI.getToken();
         String phone = ymAPI.getPhone("891","",token);
-
-
 
         WebElement account = webDriver.findElement(By.name("phoneNo"));
         account.sendKeys(phone);
@@ -203,7 +199,7 @@ public class ZhihuAction implements BBSAction{
         account1.setCookies(webDriver.manage().getCookies().toString());
         account1.setCreateTime(new Date());
         accountService.addAccount(account1);
-*/
+
         try {
             Thread.sleep(100000);
         } catch (InterruptedException e) {
@@ -488,7 +484,7 @@ public class ZhihuAction implements BBSAction{
     @Override
     public JSONObject postedRecord(WebDriver webDriver, Account account) throws Exception {
         JSONObject result = new JSONObject();
-        if(!check_login()) {
+//        if(!check_login()) {
 
 
             // 设置页面加载时间为5秒
@@ -502,7 +498,7 @@ public class ZhihuAction implements BBSAction{
 
             //设置cookie
             SeleniumUtil.setCookies(webDriver, account.getCookies());
-        }
+//        }
 
 //        try {
             webDriver.get(String.format(asks_url, account.getUserName()));

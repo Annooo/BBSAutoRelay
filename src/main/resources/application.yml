@@ -99,6 +99,13 @@ httpclient:
         socketTimeout: 3000 # sock超时时间
         timeToLive: 10 # 连接存活时间，单位s
 
+selenium:
+    driver: chrome
+    driver_show: false
+    phantomjs_exec_path :
+    phantomjs_driver_path :
+    phantomjs_driver_loglevel :
+
 #易码账号
 ym:
   username: xiaoyouzi

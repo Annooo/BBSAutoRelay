@@ -1,4 +1,4 @@
-package com.cn.BBSAutoRelay.configuration;
+package com.cn.BBSAutoRelay.Configuration;
 
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;

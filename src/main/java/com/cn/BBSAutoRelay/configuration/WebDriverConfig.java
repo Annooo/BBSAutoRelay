@@ -1,4 +1,4 @@
-package com.cn.BBSAutoRelay.configuration;
+package com.cn.BBSAutoRelay.Configuration;
 
 import com.cn.BBSAutoRelay.selenium.UserAgentUtils;
 import org.openqa.selenium.WebDriver;
@@ -11,6 +11,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,21 +34,52 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WebDriverConfig {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 初始化容量
+     */
     private static final int DEFAULT_CAPACITY = 5;
+
+    /**
+     * 实际容量
+     */
     private static int capacity = 0;
-    private static final int STAT_RUNNING = 1;
-    private static final int STAT_CLODED = 2;
+//    private static final int STAT_RUNNING = 1;
+//    private static final int STAT_CLODED = 2;
+
     private AtomicInteger stat;
+
     private WebDriver mDriver;
-    private boolean mAutoQuitDriver;
-    private static final String DEFAULT_CONFIG_FILE = "/data/webmagic/webmagic-selenium/config.ini";
+
+//    private boolean mAutoQuitDriver;
+
+//    private static final String DEFAULT_CONFIG_FILE = "/data/webmagic/webmagic-selenium/config.ini";
+
     private static final String DRIVER_FIREFOX = "firefox";
     private static final String DRIVER_CHROME = "chrome";
     private static final String DRIVER_PHANTOMJS = "phantomjs";
-    protected static Properties sConfig;
+
+//    protected static Properties sConfig;
+
     protected static DesiredCapabilities sCaps;
+
     private List<WebDriver> webDriverList;
+
     private BlockingDeque<WebDriver> innerQueue;
+
+    @Value("${selenium.driver}")
+    private String driver;
+
+    @Value("${selenium.driver_show}")
+    private String driver_show;
+
+    @Value("${selenium.phantomjs_exec_path}")
+    private String phantomjs_exec_path;
+
+    @Value("${selenium.phantomjs_driver_path}")
+    private String phantomjs_driver_path;
+
+    @Value("${selenium.phantomjs_driver_loglevel}")
+    private String phantomjs_driver_loglevel;
 
     public WebDriverConfig() {
         this(DEFAULT_CAPACITY);
@@ -58,33 +90,24 @@ public class WebDriverConfig {
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.stat = new AtomicInteger(1);
         this.mDriver = null;
-        this.mAutoQuitDriver = true;
+        //this.mAutoQuitDriver = true;
         this.webDriverList = Collections.synchronizedList(new ArrayList());
         this.innerQueue = new LinkedBlockingDeque();
         this.capacity = capacity;
     }
 
     public void configure() throws IOException {
-        sConfig = new Properties();
-        String configFile = "/data/webmagic/webmagic-selenium/config.ini";
-        if (System.getProperty("selenuim_config") != null) {
-            configFile = System.getProperty("selenuim_config");
-        }
-        sConfig.load(getClass().getClassLoader().getResourceAsStream(configFile));
         sCaps = new DesiredCapabilities();
         sCaps.setJavascriptEnabled(true);
         sCaps.setCapability("takesScreenshot", true);
-        String driver = sConfig.getProperty("driver", "chrome");
-        String driver_show = sConfig.getProperty("driver_show", "true");
         if (driver.equals(DRIVER_PHANTOMJS)) {
-            if (sConfig.getProperty("phantomjs_exec_path") == null) {
+            if (phantomjs_exec_path == null) {
                 throw new IOException(String.format("Property '%s' not set!", "phantomjs.binary.path"));
             }
-
-            sCaps.setCapability("phantomjs.binary.path", sConfig.getProperty("phantomjs_exec_path"));
-            if (sConfig.getProperty("phantomjs_driver_path") != null) {
+            sCaps.setCapability("phantomjs.binary.path", phantomjs_exec_path);
+            if (phantomjs_driver_path != null) {
                 System.out.println("Test will use an external GhostDriver");
-                sCaps.setCapability("phantomjs.ghostdriver.path", sConfig.getProperty("phantomjs_driver_path"));
+                sCaps.setCapability("phantomjs.ghostdriver.path", phantomjs_driver_path);
             } else {
                 System.out.println("Test will use PhantomJS internal GhostDriver");
             }
@@ -104,7 +127,7 @@ public class WebDriverConfig {
         cliArgsCap.add("--ssl-protocol=any");
         cliArgsCap.add("--ignore-ssl-errors=true");
         sCaps.setCapability("phantomjs.cli.args", cliArgsCap);
-        sCaps.setCapability("phantomjs.ghostdriver.cli.args", new String[]{"--logLevel=" + (sConfig.getProperty("phantomjs_driver_loglevel") != null ? sConfig.getProperty("phantomjs_driver_loglevel") : "INFO")});
+        sCaps.setCapability("phantomjs.ghostdriver.cli.args", new String[]{"--logLevel=" + (phantomjs_driver_loglevel != null ? phantomjs_driver_loglevel : "INFO")});
         if (this.isUrl(driver)) {
             sCaps.setBrowserName("phantomjs");
             this.mDriver = new RemoteWebDriver(new URL(driver), sCaps);
@@ -122,34 +145,7 @@ public class WebDriverConfig {
                 chromeOptions.addArguments("--disable-extensions");
                 chromeOptions.addArguments("--no-sandbox");
             }
-            //设置代理
-            //System.out.println("代理:"+Data5uUtil.getIPpool().size());
-            //Proxy proxy = Data5uUtil.getIPpool().poll();
-//            Proxy proxy = Data5uUtil.getIPpool().peekLast();
-//            if(proxy != null){
-//                System.out.println("代理配置:==>"+proxy);
-//                org.openqa.selenium.Proxy proxy1 = getProxy(proxy);
-//                chromeOptions.setProxy(proxy1);
-//                sCaps.setCapability(CapabilityType.ForSeleniumServer.AVOIDING_PROXY, true);
-//                sCaps.setCapability(CapabilityType.ForSeleniumServer.ONLY_PROXYING_SELENIUM_TRAFFIC, true);
-//                System.setProperty("http.nonProxyHosts", "localhost");//不需要用代理访问的主机
-//                sCaps.setCapability(CapabilityType.PROXY, proxy);
-//                //chromeOptions.addArguments("--proxy-server=socks5://" + proxy.getHost() + ":" + proxy.getPort());
-//            }
             sCaps.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-
-            //拓展设置
-            //chromeOptions.addArguments("log-path=chromedriver.log");
-            //chromeOptions.addArguments("screenshot"); 每打开一个页面就截图
-            //chromeOptions.addArguments("start-maximized"); 最大化
-
-            /*
-            Map<String, Object> prefs = new HashMap<String, Object>();
-            //prefs.put("profile.default_content_settings.popups", 0);
-            //http://stackoverflow.com/questions/28070315/python-disable-images-in-selenium-google-chromedriver
-            prefs.put("profile.managed_default_content_settings.images",2); //禁止下载加载图片
-            chromeOptions.setExperimentalOption("prefs", prefs);
-            */
 
             //this.mDriver = new ChromeDriver(chromeOptions);
             this.mDriver = new ChromeDriver(sCaps);
@@ -168,10 +164,9 @@ public class WebDriverConfig {
         }
     }
 
-    @Bean
-    public WebDriver get() throws InterruptedException {
+    public WebDriver getWebDriver() throws InterruptedException {
+        logger.info("获取驱动");
         this.checkRunning();
-        //System.out.println("驱动队列的数量:"+innerQueue.size());
         WebDriver poll = (WebDriver)this.innerQueue.poll();
         if (poll != null) {
             return poll;
@@ -181,10 +176,9 @@ public class WebDriverConfig {
                 synchronized(this.webDriverList) {
                     if (this.webDriverList.size() < this.capacity) {
                         try {
-                            //System.out.println("没有驱动了 要去重新生成了////////////////////////////////////////////");
                             this.configure();
+                            mDriver.manage().timeouts().pageLoadTimeout(30,TimeUnit.SECONDS);
                             mDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-                            mDriver.manage().timeouts().pageLoadTimeout(100,TimeUnit.SECONDS);
                             mDriver.manage().timeouts().setScriptTimeout(10,TimeUnit.SECONDS);
                             mDriver.manage().window().maximize();
                             this.innerQueue.add(this.mDriver);

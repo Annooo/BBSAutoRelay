@@ -1,7 +1,9 @@
 package com.cn.BBSAutoRelay.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cn.BBSAutoRelay.model.Account;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -26,4 +28,10 @@ public interface AccountService {
      * @return
      */
     PageInfo queryAccounts(int pageNum, int pageSize);
+
+    /**
+     * 查询账号信息
+     * @return
+     */
+    JSONObject queryPostedRecord(Account account);
 }
