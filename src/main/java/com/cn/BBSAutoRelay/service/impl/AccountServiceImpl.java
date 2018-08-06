@@ -16,15 +16,34 @@ public class AccountServiceImpl implements AccountService{
     @Autowired
     private AccountMapper accountMapper;
 
+    /**
+     * 新增账号信息
+     * @param account
+     * @return
+     */
     @Override
     public int addAccount(Account account) {
         return accountMapper.insert(account);
     }
 
+    /**
+     * 修改账号信息
+     * @param account
+     * @return
+     */
+    @Override
+    public int updateAccount(Account account) {
+        return accountMapper.updateByPrimaryKeySelective(account);
+    }
+
+    /**
+     * 查询账号信息
+     * @return
+     */
     @Override
     public PageInfo queryAccounts(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Account> accounts = accountMapper.selectAccountAll();
+        List<Account> accounts = accountMapper.selectAll();
         PageInfo result = new PageInfo(accounts);
         return result;
     }

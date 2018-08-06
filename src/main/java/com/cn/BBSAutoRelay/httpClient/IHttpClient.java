@@ -57,8 +57,13 @@ public class IHttpClient {
 
     // 采用静态代码块，初始化超时时间配置，再根据配置生成默认httpClient对象
     private void init(){
-        context = HttpClientContext.create();
-        cookieStore = new BasicCookieStore();
+        if(context == null) {
+            context = HttpClientContext.create();
+        }
+        if(cookieStore == null) {
+            cookieStore = new BasicCookieStore();
+            context.setCookieStore(cookieStore);
+        }
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(Constants.TIMEOUT)
                 .setSocketTimeout(15000)
@@ -72,21 +77,28 @@ public class IHttpClient {
                 //.setRedirectStrategy(new DefaultRedirectStrategy())
                 .setDefaultRequestConfig(config)
                 .setDefaultCookieStore(cookieStore)
-                //.setProxy(new HttpHost("127.0.0.1",8888))
+                .setProxy(new HttpHost("127.0.0.1",8888))
                 .build();
     }
 
     public IHttpClient() {
-        this(null,CHARSET);
+        this(null, null, CHARSET);
     }
 
     public IHttpClient(HttpClientContext context) {
-        this(context,CHARSET);
+        this(context, null, CHARSET);
     }
 
-    public IHttpClient(HttpClientContext context, String charset) {
+    public IHttpClient(CookieStore cookieStore) {
+        this(null, cookieStore, CHARSET);
+    }
+
+    public IHttpClient(HttpClientContext context, CookieStore cookieStore, String charset) {
         if(context != null) {
             this.context = context;
+        }
+        if(cookieStore != null) {
+            this.cookieStore = cookieStore;
         }
         this.charset = charset;
         init();
@@ -96,8 +108,11 @@ public class IHttpClient {
         return context;
     }
 
-    public HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers) {
+    public HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers ) {
         return doGet(url, params, headers, false ,charset);
+    }
+    public HttpResult doGet(String url, Map<String, String> params, Map<String, String> headers ,boolean redirect) {
+        return doGet(url, params, headers, redirect ,charset);
     }
 
     public HttpResult doGetSSL(String url, Map<String, String> params, Map<String, String> headers) {
@@ -163,7 +178,7 @@ public class IHttpClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("get close cookie:"+context.getCookieStore());
+        //System.out.println("get close cookie:"+context.getCookieStore());
         return httpResult;
     }
 
@@ -204,9 +219,9 @@ public class IHttpClient {
         }
         CloseableHttpResponse response = null;
         try {
-            System.out.println("post brfore cookie:"+context.getCookieStore());
+            //System.out.println("post brfore cookie:"+context.getCookieStore());
             response = httpClient.execute(httpPost, context);
-            System.out.println("post after cookie:"+context.getCookieStore());
+            //System.out.println("post after cookie:"+context.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
 //            if (statusCode != 200) {
 //                httpPost.abort();
@@ -226,7 +241,7 @@ public class IHttpClient {
             if (response != null)
                 response.close();
         }
-        System.out.println("post close cookie:"+context.getCookieStore());
+        //System.out.println("post close cookie:"+context.getCookieStore());
         return httpResult;
     }
 
@@ -331,9 +346,9 @@ public class IHttpClient {
         }
         CloseableHttpResponse response = null;
         try {
-            System.out.println("put brfore cookie:"+context.getCookieStore());
+            //System.out.println("put brfore cookie:"+context.getCookieStore());
             response = httpClient.execute(httpPut, context);
-            System.out.println("put after cookie:"+context.getCookieStore());
+            //System.out.println("put after cookie:"+context.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
 //            if (statusCode != 200) {
 //                httpPut.abort();
@@ -353,7 +368,7 @@ public class IHttpClient {
             if (response != null)
                 response.close();
         }
-        System.out.println("put close cookie:"+context.getCookieStore());
+        //System.out.println("put close cookie:"+context.getCookieStore());
         return httpResult;
     }
 
@@ -471,5 +486,9 @@ public class IHttpClient {
             }
         }
         return res;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID());
     }
 }

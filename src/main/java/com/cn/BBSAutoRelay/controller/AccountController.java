@@ -1,5 +1,6 @@
 package com.cn.BBSAutoRelay.controller;
 
+import com.cn.BBSAutoRelay.annotation.LoggerManage;
 import com.cn.BBSAutoRelay.model.Account;
 import com.cn.BBSAutoRelay.model.ResultMap;
 import com.cn.BBSAutoRelay.service.AccountService;
@@ -30,6 +31,7 @@ public class AccountController {
         return accountService.addAccount(account);
     }
 
+    @LoggerManage(description = "滑稽")
     @ResponseBody
     @GetMapping("/queryAccountList")
     public ResultMap queryAccountList(

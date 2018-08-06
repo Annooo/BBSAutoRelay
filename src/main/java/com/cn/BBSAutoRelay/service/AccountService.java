@@ -15,6 +15,13 @@ public interface AccountService {
     int addAccount(Account account);
 
     /**
+     * 修改账号信息
+     * @param account
+     * @return
+     */
+    int updateAccount(Account account);
+
+    /**
      * 查询账号信息
      * @return
      */
