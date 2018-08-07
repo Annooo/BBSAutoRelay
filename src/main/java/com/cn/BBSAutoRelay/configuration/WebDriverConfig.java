@@ -135,7 +135,7 @@ public class WebDriverConfig {
             ChromeOptions chromeOptions = new ChromeOptions();
             if("false".equals(driver_show)){
                 //设置浏览器窗口打开大小  （非必须）
-                chromeOptions.addArguments("--window-size=1920,1080");
+                //chromeOptions.addArguments("--window-size=1920,1080");
                 //设置为 headless 模式 （必须）
                 chromeOptions.addArguments("--headless");
                 //设置浏览器禁用显卡
@@ -147,6 +147,12 @@ public class WebDriverConfig {
             //chromeOptions.addArguments("--print-to-pdf");
             //chromeOptions.addArguments("blink-settings=imagesEnabled=false");//不加载图片, 提升速度
             chromeOptions.addArguments("lang=zh_CN.UTF-8");//设置默认编码为 utf-8，也就是中文
+
+            chromeOptions.addArguments("--disable-extensions");//设置默认编码为 utf-8，也就是中文
+            chromeOptions.addArguments("--profile-directory=Default");//设置默认编码为 utf-8，也就是中文
+            chromeOptions.addArguments("--incognito");//设置默认编码为 utf-8，也就是中文
+            chromeOptions.addArguments("--disable-plugins-discovery");//设置默认编码为 utf-8，也就是中文
+            chromeOptions.addArguments("--start-maximized");//设置默认编码为 utf-8，也就是中文
             //chromeOptions.addArguments("user-agent=\"MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1\"");//模拟安卓QQ浏览器
 
             sCaps.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
