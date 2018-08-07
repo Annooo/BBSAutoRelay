@@ -12,6 +12,7 @@ import com.cn.BBSAutoRelay.selenium.WebDriverPool;
 import com.cn.BBSAutoRelay.service.AccountService;
 import com.cn.BBSAutoRelay.sms.YmAPI;
 import com.cn.BBSAutoRelay.util.ByteUtils;
+import com.google.common.base.Function;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -25,6 +26,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.awt.*;
@@ -107,39 +110,41 @@ public class ZhihuAction implements BBSAction{
 
     @Override
     public void register(WebDriver webDriver) throws Exception {
-        webDriver.get("https://www.zhihu.com/");
+        webDriver.manage().deleteAllCookies();
+
+        webDriver.get("https://www.zhihu.com/signup");
 
         // 设置页面加载时间为5秒
-        webDriver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
-        webDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+//        webDriver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+//        webDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 
 //        WebElement webElement = webDriver.findElement(By.xpath("/html"));
 //        String content = webElement.getAttribute("outerHTML");
         //System.out.println(content);
 
         //休眠一秒钟
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
-        WebElement registerButton = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div/div[1]/div/div[1]/div[2]/button[2]"));
-        registerButton.click();
-        logger.info("点击");
+//        WebElement registerButton = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div/div[1]/div/div[1]/div[2]/button[2]"));
+//        registerButton.click();
+//        logger.info("点击");
 
         // 表单切换到最顶层的frame中。
         //webDriver.switchTo().frame("top");
         //System.out.println(webDriver.switchTo().frame(0));
 
         //休眠一秒钟
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
         //webDriver.findElement(By.xpath("/html/body/div[5]/div/span/div/div[2]/div/div/div/div[2]/div[1]/div/div/form/div[3]/div[1]/button")).click();
         //获取手机号
@@ -150,6 +155,22 @@ public class ZhihuAction implements BBSAction{
         WebElement account = webDriver.findElement(By.name("phoneNo"));
         account.sendKeys(phone);
         //account.click();
+
+        ((RemoteWebDriver) webDriver).executeScript(
+                "window.getJSON=$.getJSON;$.getJSON=function(){ var funObj=arguments[2]; var myFun=function(data){  window.myData=data;  funObj(data); } ; window.getJSON(arguments[0],arguments[1],myFun) }");
+
+        WebDriverWait wait = new WebDriverWait(webDriver, 1);
+        Map<String, ?> data = (Map<String, ?>)wait.until(new Function<WebDriver, Object>() {
+            public Object apply(@Nullable WebDriver driver) {
+                return  ((RemoteWebDriver) driver).executeScript("return window.myData;");
+            }
+        });
+        if(!"0".equals(data.get("code"))){
+            System.out.println("error");
+            return;
+        }else{
+            System.out.println("success");
+        }
 
         ///html/body/div[4]/div/span/div/div[2]/div/div/div/div[2]/div[1]/div/div/form/div[2]
         //Captcha SignFlow-captchaContainer Register-captcha Captcha-chinese
@@ -165,6 +186,9 @@ public class ZhihuAction implements BBSAction{
         ///html/body/div[5]/div/span/div/div[2]/div/div/div/div[2]/div[1]/div/div/form/div[3]/div[1]/button
         WebElement button = webDriver.findElement(By.xpath("/html/body/div[5]/div/span/div/div[2]/div/div/div/div[2]/div[1]/div/div/form/div[3]/div[1]/button"));
         button.click();
+
+        ///html/body/div[4]/div/span/div/div[2]/div/div/div/div[2]/div[1]/div/div/form/div[3]/div[1]/div/div[2]
+        //SignFlowInput-errorMask SignFlow-smsInputErrorMessage SignFlowInput-requiredErrorMask
 
         String message = ymAPI.getMessage("891",phone,token);
         WebElement digits = webDriver.findElement(By.name("digits"));
@@ -510,13 +534,13 @@ public class ZhihuAction implements BBSAction{
 //        }
 
 
-        WebDriverWait wait = new WebDriverWait(webDriver,3);
-        wait.until(new ExpectedCondition<Boolean>(){
-            @Override
-            public Boolean apply(WebDriver d) {
-                logger.info("11111");
-                return d.findElement(By.xpath("//*[@id=\"Profile-asks\"]/div[2]/div")).isDisplayed();
-            }});
+//        WebDriverWait wait = new WebDriverWait(webDriver,3);
+//        wait.until(new ExpectedCondition<Boolean>(){
+//            @Override
+//            public Boolean apply(WebDriver d) {
+//                logger.info("11111");
+//                return d.findElement(By.xpath("//*[@id=\"Profile-asks\"]/div[2]/div")).isDisplayed();
+//            }});
 
 
 

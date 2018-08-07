@@ -34,4 +34,11 @@ public interface AccountService {
      * @return
      */
     JSONObject queryPostedRecord(Account account);
+
+    /**
+     * 注册
+     * @param account
+     * @return
+     */
+    void register(Account account);
 }

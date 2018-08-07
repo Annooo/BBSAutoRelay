@@ -48,4 +48,10 @@ public class AccountController {
     public Object queryPostedRecord(Account account){
         return accountService.queryPostedRecord(account);
     }
+
+    @LoggerManage(description = "滑稽")
+    @RequestMapping("/register")
+    public void register(Account account){
+        accountService.register(account);
+    }
 }

@@ -100,11 +100,12 @@ httpclient:
         timeToLive: 10 # 连接存活时间，单位s
 
 selenium:
+    #driver: phantomjs
     driver: chrome
-    driver_show: false
-    phantomjs_exec_path :
-    phantomjs_driver_path :
-    phantomjs_driver_loglevel :
+    driver_show: true
+    phantomjs_exec_path: C:\Users\Administrator\Desktop\BBSAutoRelay\src\main\resources/phantomjs.exe
+    phantomjs_driver_path:
+    phantomjs_driver_loglevel:
 
 #易码账号
 ym:

@@ -1,6 +1,7 @@
 package com.cn.BBSAutoRelay.Configuration;
 
 import com.cn.BBSAutoRelay.selenium.UserAgentUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -18,10 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -101,11 +99,11 @@ public class WebDriverConfig {
         sCaps.setJavascriptEnabled(true);
         sCaps.setCapability("takesScreenshot", true);
         if (driver.equals(DRIVER_PHANTOMJS)) {
-            if (phantomjs_exec_path == null) {
+            if (StringUtils.isEmpty(phantomjs_exec_path)) {
                 throw new IOException(String.format("Property '%s' not set!", "phantomjs.binary.path"));
             }
             sCaps.setCapability("phantomjs.binary.path", phantomjs_exec_path);
-            if (phantomjs_driver_path != null) {
+            if (StringUtils.isNotEmpty(phantomjs_driver_path)) {
                 System.out.println("Test will use an external GhostDriver");
                 sCaps.setCapability("phantomjs.ghostdriver.path", phantomjs_driver_path);
             } else {
@@ -142,9 +140,15 @@ public class WebDriverConfig {
                 chromeOptions.addArguments("--headless");
                 //设置浏览器禁用显卡
                 chromeOptions.addArguments("--disable-gpu");
-                chromeOptions.addArguments("--disable-extensions");
+                //chromeOptions.addArguments("--disable-extensions");
                 chromeOptions.addArguments("--no-sandbox");
             }
+            //chromeOptions.addArguments("--dump-dom");
+            //chromeOptions.addArguments("--print-to-pdf");
+            //chromeOptions.addArguments("blink-settings=imagesEnabled=false");//不加载图片, 提升速度
+            chromeOptions.addArguments("lang=zh_CN.UTF-8");//设置默认编码为 utf-8，也就是中文
+            //chromeOptions.addArguments("user-agent=\"MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1\"");//模拟安卓QQ浏览器
+
             sCaps.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
             //this.mDriver = new ChromeDriver(chromeOptions);
@@ -197,6 +201,27 @@ public class WebDriverConfig {
     protected void checkRunning() {
         if (!this.stat.compareAndSet(1, 1)) {
             throw new IllegalStateException("Already closed!");
+        }
+    }
+
+    public void returnToPool(WebDriver webDriver) {
+        this.checkRunning();
+
+        this.innerQueue.add(webDriver);
+    }
+
+    public void closeAll() {
+        boolean b = this.stat.compareAndSet(1, 2);
+        if (!b) {
+            throw new IllegalStateException("Already closed!");
+        } else {
+            WebDriver webDriver;
+            for(Iterator var2 = this.webDriverList.iterator(); var2.hasNext(); webDriver = null) {
+                webDriver = (WebDriver)var2.next();
+                this.logger.info("Quit webDriver" + webDriver);
+                webDriver.quit();
+            }
+
         }
     }
 }

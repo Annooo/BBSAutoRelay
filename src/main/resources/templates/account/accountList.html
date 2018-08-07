@@ -43,6 +43,16 @@
                         <!--</div>-->
                         <!--<button class="layui-btn" data-type="reload">搜索</button>-->
                     <!--</div>-->
+                    <div class="layui-col-md12" style="height:40px;margin-top:3px;">
+                        <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-normal" data-type="register">
+                                <i class="layui-icon">&#xe640;</i>注册
+                            </button>
+                            <button class="layui-btn layui-btn-normal" data-type="ref">
+                                <i class="layui-icon">&#xe640;</i>更新
+                            </button>
+                        </div>
+                    </div>
 
                     <table class="layui-hide" id="table_account" lay-filter="account"></table>
 
@@ -100,7 +110,53 @@
                 layer.alert('编辑行：<br>'+ JSON.stringify(data))
             }
         });
+
+        var $ = layui.$, active = {
+            select: function () {
+                var userName = $('#userName').val();
+                var type = $('#type').val();
+                table.reload('logList', {
+                    where: {
+                        userName: userName,
+                        type: type
+                    }
+                });
+            }
+            ,register:function(){
+                register();
+            }
+            ,reload:function(){
+                $('#userName').val('');
+                $('#type').val('');
+                table.reload('table_account', {
+                    where: {
+                        userName: null,
+                        type: null
+                    }
+                });
+            },
+        };
+
+        $('.layui-col-md12 .layui-btn').on('click', function () {
+            debugger;
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
     });
+
+    /**批量删除id*/
+    function register() {
+        $.ajax({
+            url: "register",
+            type: "post",
+            //data: {ids: ids},
+            dataType: "json", traditional: true,
+            success: function (data) {
+                layer.msg(data.msg, {icon: 6});
+                layui.table.reload('table_account');
+            }
+        });
+    }
     /*]]>*/
 </script>
 
