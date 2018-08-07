@@ -37,6 +37,7 @@ public class BbsAutoRelayApplicationTests {
 	public void contextLoads() throws Exception {
 
 		WebDriver webDriver = webDriverConfig.getWebDriver();
+//		WebDriver webDriver = new ChromeDriver();
 //		BBSAction zhihuAction = new ZhihuAction(0 ,null);
 		Account account = new Account();
         account.setId(1);

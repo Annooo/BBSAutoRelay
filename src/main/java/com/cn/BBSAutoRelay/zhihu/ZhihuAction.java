@@ -114,6 +114,10 @@ public class ZhihuAction implements BBSAction{
 
         webDriver.get("https://www.zhihu.com/signup");
 
+        //设置cookie
+        //SeleniumUtil.setCookies(webDriver, account.getCookies());
+        webDriver.navigate().forward();
+
         // 设置页面加载时间为5秒
 //        webDriver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
 //        webDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
@@ -130,9 +134,9 @@ public class ZhihuAction implements BBSAction{
 //            e.printStackTrace();
 //        }
 
-//        WebElement registerButton = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div/div[1]/div/div[1]/div[2]/button[2]"));
-//        registerButton.click();
-//        logger.info("点击");
+        WebElement registerButton = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div/div[1]/div/div[1]/div[2]/button[2]"));
+        registerButton.click();
+        logger.info("点击");
 
         // 表单切换到最顶层的frame中。
         //webDriver.switchTo().frame("top");
